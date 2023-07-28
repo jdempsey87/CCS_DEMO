@@ -246,19 +246,21 @@ public class OVRGrabber : MonoBehaviour
                 continue;
             }
 
-            for (int j = 0; j < grabbable.grabPoints.Length; ++j)
-            {
-                Collider grabbableCollider = grabbable.grabPoints[j];
-                // Store the closest grabbable
-                Vector3 closestPointOnBounds = grabbableCollider.ClosestPointOnBounds(m_gripTransform.position);
-                float grabbableMagSq = (m_gripTransform.position - closestPointOnBounds).sqrMagnitude;
-                if (grabbableMagSq < closestMagSq)
+            //fix ???
+            if(grabbable!=null)
+                for (int j = 0; j < grabbable.grabPoints.Length; ++j)
                 {
-                    closestMagSq = grabbableMagSq;
-                    closestGrabbable = grabbable;
-                    closestGrabbableCollider = grabbableCollider;
+                    Collider grabbableCollider = grabbable.grabPoints[j];
+                    // Store the closest grabbable
+                    Vector3 closestPointOnBounds = grabbableCollider.ClosestPointOnBounds(m_gripTransform.position);
+                    float grabbableMagSq = (m_gripTransform.position - closestPointOnBounds).sqrMagnitude;
+                    if (grabbableMagSq < closestMagSq)
+                    {
+                        closestMagSq = grabbableMagSq;
+                        closestGrabbable = grabbable;
+                        closestGrabbableCollider = grabbableCollider;
+                    }
                 }
-            }
         }
 
         // Disable grab volumes to prevent overlaps
