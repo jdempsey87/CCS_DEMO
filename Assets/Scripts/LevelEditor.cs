@@ -29,31 +29,16 @@ public class LevelEditor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
-        //controls for deleting held object
-        OVRGrabbable grabbed = Lgrab.grabbedObject;
-        //if trigger while holding 
-        if (grabbed != null && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > 0.0f)
-        {
-            Lgrab.ForceRelease(grabbed);
-            Destroy(grabbed.gameObject);
-            wasTriggerPressed = true;
-            return;
-
-        }
-        grabbed = Rgrab.grabbedObject;
-        //if trigger while holding 
-        if (grabbed != null && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > 0.0f)
-        {
-            Rgrab.ForceRelease(grabbed);
-            Destroy(grabbed.gameObject);
-            wasTriggerPressed = true;
-            return;
-
-        }
-
         controllerType = OVRInput.Controller.RTouch;
+
+        // Call this for the left controller
+        OVRGrabbable grabbedL = Lgrab.grabbedObject;
+        HandleDeleteObject(grabbedL, OVRInput.Controller.LTouch);
+
+        // Call this for the right controller
+        OVRGrabbable grabbedR = Rgrab.grabbedObject;
+        HandleDeleteObject(grabbedR, OVRInput.Controller.RTouch);
+
 
         ////TEST Control
         //// Get the index trigger input for the specified controller
@@ -65,10 +50,7 @@ public class LevelEditor : MonoBehaviour
         //    SpawnObject(GetWorldspaceControllerTransform(controllerType));
         //}
 
-
-
         //spawn on pull and reset on release
-
         // Get the index trigger input for the specified controller
         float indexTriggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, controllerType);
 
@@ -216,5 +198,16 @@ private void SpawnLevelObjects(Scene scene)
         data.rotation = new float[] { transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w };
         data.scale = new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z };
         return data;
+    }
+
+    private void HandleDeleteObject(OVRGrabbable grabbedObject, OVRInput.Controller controller)
+    {
+        if (grabbedObject != null && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, controller) > 0.0f)
+        {
+            OVRGrabber grabber = (controller == OVRInput.Controller.LTouch) ? Lgrab : Rgrab;
+            grabber.ForceRelease(grabbedObject);
+            Destroy(grabbedObject.gameObject);
+            wasTriggerPressed = true;
+        }
     }
 }
